@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingCart, BarChart3, Landmark, CloudSun, MessageCircle, Leaf, TrendingUp, Users } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { ShoppingCart, BarChart3, Landmark, CloudSun, MessageCircle, Leaf, TrendingUp, Users, Package, Shield } from 'lucide-react';
 
 const modules = [
   { path: '/marketplace', label: 'Marketplace', desc: 'Buy seeds, fertilizers & tools', icon: ShoppingCart, color: 'bg-primary/10 text-primary' },
   { path: '/market-rates', label: 'APMC Rates', desc: 'Live crop prices from APMC', icon: BarChart3, color: 'bg-info/10 text-info' },
+  { path: '/soil-prediction', label: 'Soil & Crop AI', desc: 'ML-powered crop prediction', icon: Leaf, color: 'bg-success/10 text-success' },
   { path: '/yojanas', label: 'Govt Schemes', desc: 'Yojana info & eligibility', icon: Landmark, color: 'bg-secondary/10 text-secondary' },
   { path: '/weather', label: 'Weather', desc: 'Forecasts for crop planning', icon: CloudSun, color: 'bg-warning/10 text-warning' },
   { path: '/community', label: 'Community', desc: 'Connect with fellow farmers', icon: MessageCircle, color: 'bg-success/10 text-success' },
+  { path: '/vendor', label: 'Vendor Panel', desc: 'Manage your product listings', icon: Package, color: 'bg-info/10 text-info' },
+  { path: '/admin', label: 'Admin Panel', desc: 'System management & analytics', icon: Shield, color: 'bg-destructive/10 text-destructive' },
 ];
 
 const stats = [
@@ -49,7 +52,7 @@ export default function Dashboard() {
 
       <div>
         <h2 className="font-display text-xl font-semibold text-foreground mb-4">Quick Access</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {modules.map((mod) => {
             const Icon = mod.icon;
             return (

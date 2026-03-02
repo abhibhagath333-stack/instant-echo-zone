@@ -1,16 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Sprout, ShoppingCart, BarChart3, Landmark, CloudSun, MessageCircle, LogOut, Menu, X, User } from 'lucide-react';
+import { Sprout, ShoppingCart, BarChart3, Landmark, CloudSun, MessageCircle, Leaf, Package, Shield, LogOut, Menu, X, User } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: Sprout },
   { path: '/marketplace', label: 'Marketplace', icon: ShoppingCart },
   { path: '/market-rates', label: 'APMC Rates', icon: BarChart3 },
+  { path: '/soil-prediction', label: 'Soil AI', icon: Leaf },
   { path: '/yojanas', label: 'Schemes', icon: Landmark },
   { path: '/weather', label: 'Weather', icon: CloudSun },
   { path: '/community', label: 'Community', icon: MessageCircle },
+  { path: '/vendor', label: 'Vendor', icon: Package },
+  { path: '/admin', label: 'Admin', icon: Shield },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -27,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span className="font-display text-xl font-bold text-foreground">AgriDigital</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = location.pathname === item.path;
@@ -35,13 +38,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${
                     active
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-3.5 w-3.5" />
                   {item.label}
                 </Link>
               );
@@ -64,14 +67,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Button size="sm">Sign In</Button>
               </Link>
             )}
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
+            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden border-t border-border bg-card p-4 animate-fade-in">
+          <div className="lg:hidden border-t border-border bg-card p-4 animate-fade-in">
             <nav className="flex flex-col gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,6 @@ interface Post {
   user_id: string;
   content: string;
   created_at: string;
-  profiles?: { full_name: string } | null;
 }
 
 export default function Community() {
@@ -25,7 +24,7 @@ export default function Community() {
   const fetchPosts = async () => {
     const { data } = await supabase
       .from('posts')
-      .select('*, profiles(full_name)')
+      .select('*')
       .order('created_at', { ascending: false });
     setPosts(data || []);
     setLoading(false);
@@ -34,7 +33,6 @@ export default function Community() {
   useEffect(() => {
     fetchPosts();
 
-    // Real-time subscription
     const channel = supabase
       .channel('posts-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
@@ -78,7 +76,6 @@ export default function Community() {
         <p className="text-xs text-primary mt-1">✨ Posts update in real-time!</p>
       </div>
 
-      {/* New post */}
       <Card className="shadow-soft">
         <CardContent className="p-4 space-y-3">
           <Textarea
@@ -96,7 +93,6 @@ export default function Community() {
         </CardContent>
       </Card>
 
-      {/* Posts feed */}
       {loading ? (
         <div className="text-center py-8 text-muted-foreground">Loading posts...</div>
       ) : posts.length === 0 ? (
@@ -115,9 +111,7 @@ export default function Community() {
                       <User className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-foreground">
-                        {post.profiles?.full_name || 'Anonymous Farmer'}
-                      </p>
+                      <p className="text-sm font-semibold text-foreground">Farmer</p>
                       <p className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                       </p>

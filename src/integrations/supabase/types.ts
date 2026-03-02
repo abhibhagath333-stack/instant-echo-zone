@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      cart_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_rates: {
         Row: {
           created_at: string | null
@@ -47,6 +79,78 @@ export type Database = {
           max_price?: number | null
           min_price?: number | null
           modal_price?: number | null
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          price: number
+          product_id: string
+          quantity: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          price: number
+          product_id: string
+          quantity?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          price?: number
+          product_id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          shipping_address: string | null
+          status: string
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          shipping_address?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          shipping_address?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -142,6 +246,54 @@ export type Database = {
           phone?: string | null
           role?: string | null
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      soil_predictions: {
+        Row: {
+          created_at: string
+          humidity: number | null
+          id: string
+          nitrogen: number
+          ph: number
+          phosphorus: number
+          potassium: number
+          predicted_crops: string[] | null
+          rainfall: number | null
+          recommendation: string | null
+          soil_type: string | null
+          temperature: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          humidity?: number | null
+          id?: string
+          nitrogen: number
+          ph: number
+          phosphorus: number
+          potassium: number
+          predicted_crops?: string[] | null
+          rainfall?: number | null
+          recommendation?: string | null
+          soil_type?: string | null
+          temperature?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          humidity?: number | null
+          id?: string
+          nitrogen?: number
+          ph?: number
+          phosphorus?: number
+          potassium?: number
+          predicted_crops?: string[] | null
+          rainfall?: number | null
+          recommendation?: string | null
+          soil_type?: string | null
+          temperature?: number | null
           user_id?: string
         }
         Relationships: []

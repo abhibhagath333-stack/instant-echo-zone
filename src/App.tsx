@@ -12,6 +12,11 @@ import MarketRates from "./pages/MarketRates";
 import Yojanas from "./pages/Yojanas";
 import Weather from "./pages/Weather";
 import Community from "./pages/Community";
+import SoilPrediction from "./pages/SoilPrediction";
+import VendorDashboard from "./pages/VendorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import Cart from "./pages/Cart";
+import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +40,11 @@ const App = () => (
           <Route path="/yojanas" element={<AppLayout><Yojanas /></AppLayout>} />
           <Route path="/weather" element={<AppLayout><Weather /></AppLayout>} />
           <Route path="/community" element={<AppLayout><Community /></AppLayout>} />
+          <Route path="/soil-prediction" element={<AppLayout><SoilPrediction /></AppLayout>} />
+          <Route path="/vendor" element={<AppLayout><VendorDashboard /></AppLayout>} />
+          <Route path="/admin" element={<AppLayout><AdminDashboard /></AppLayout>} />
+          <Route path="/cart" element={<AppLayout><Cart /></AppLayout>} />
+          <Route path="/orders" element={<AppLayout><Orders /></AppLayout>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
