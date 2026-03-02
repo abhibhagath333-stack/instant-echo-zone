@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,10 +8,10 @@ import { Landmark, ExternalLink, CheckCircle } from 'lucide-react';
 interface Yojana {
   id: string;
   title: string;
-  description: string;
-  eligibility: string;
-  benefits: string;
-  link: string;
+  description: string | null;
+  eligibility: string | null;
+  benefits: string | null;
+  link: string | null;
 }
 
 export default function Yojanas() {
