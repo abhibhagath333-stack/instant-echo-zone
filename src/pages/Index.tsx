@@ -30,10 +30,20 @@ export default function Index() {
             <Sprout className="h-7 w-7 text-primary-foreground" />
             <span className="font-display text-xl font-bold text-primary-foreground">AgriDigital</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link to="/auth">
               <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                Sign In
+                Farmer
+              </Button>
+            </Link>
+            <Link to="/vendor-auth">
+              <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+                Vendor
+              </Button>
+            </Link>
+            <Link to="/admin-auth">
+              <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+                Admin
               </Button>
             </Link>
             <Link to="/auth">

@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import VendorAuth from "./pages/VendorAuth";
+import AdminAuth from "./pages/AdminAuth";
 import Dashboard from "./pages/Dashboard";
 import Marketplace from "./pages/Marketplace";
 import MarketRates from "./pages/MarketRates";
@@ -34,6 +36,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/vendor-auth" element={<VendorAuth />} />
+          <Route path="/admin-auth" element={<AdminAuth />} />
           <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
           <Route path="/marketplace" element={<AppLayout><Marketplace /></AppLayout>} />
           <Route path="/market-rates" element={<AppLayout><MarketRates /></AppLayout>} />

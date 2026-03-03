@@ -3,7 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TrendingUp, BarChart3, Search } from 'lucide-react';
 
 interface MarketRate {
   id: string;
@@ -19,6 +21,8 @@ interface MarketRate {
 export default function MarketRates() {
   const [rates, setRates] = useState<MarketRate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [marketFilter, setMarketFilter] = useState('all');
 
   useEffect(() => {
     supabase.from('market_rates').select('*').order('date', { ascending: false }).then(({ data }) => {
@@ -26,6 +30,17 @@ export default function MarketRates() {
       setLoading(false);
     });
   }, []);
+
+  const markets = [...new Set(rates.map(r => r.market_name))];
+
+  const filtered = rates.filter((rate) => {
+    const matchesSearch = searchQuery === '' ||
+      rate.crop_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      rate.market_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (rate.location && rate.location.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesMarket = marketFilter === 'all' || rate.market_name === marketFilter;
+    return matchesSearch && matchesMarket;
+  });
 
   return (
     <div className="container py-8 space-y-6">
@@ -37,8 +52,33 @@ export default function MarketRates() {
         <p className="text-muted-foreground mt-1">Daily crop prices from nearby APMC markets</p>
       </div>
 
+      {/* Search & Filter */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by crop, market, or location..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Select value={marketFilter} onValueChange={setMarketFilter}>
+          <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectValue placeholder="Filter by market" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Markets</SelectItem>
+            {markets.map((m) => (
+              <SelectItem key={m} value={m}>{m}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Top Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {rates.slice(0, 3).map((rate) => (
+        {filtered.slice(0, 3).map((rate) => (
           <Card key={rate.id} className="shadow-soft">
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-2">
@@ -56,13 +96,19 @@ export default function MarketRates() {
         ))}
       </div>
 
+      {/* Table */}
       <Card className="shadow-soft">
         <CardHeader>
-          <CardTitle className="font-display">All Market Rates</CardTitle>
+          <CardTitle className="font-display flex items-center justify-between">
+            All Market Rates
+            <span className="text-sm font-normal text-muted-foreground">{filtered.length} results</span>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="text-center py-8 text-muted-foreground">Loading rates...</div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">No matching rates found.</div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
@@ -78,7 +124,7 @@ export default function MarketRates() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rates.map((rate) => (
+                  {filtered.map((rate) => (
                     <TableRow key={rate.id}>
                       <TableCell className="font-medium">{rate.crop_name}</TableCell>
                       <TableCell>{rate.market_name}</TableCell>
