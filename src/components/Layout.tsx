@@ -4,22 +4,25 @@ import { Button } from '@/components/ui/button';
 import { Sprout, ShoppingCart, BarChart3, Landmark, CloudSun, MessageCircle, Leaf, Package, Shield, LogOut, Menu, X, User } from 'lucide-react';
 import { useState } from 'react';
 
-const navItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: Sprout },
-  { path: '/marketplace', label: 'Marketplace', icon: ShoppingCart },
-  { path: '/market-rates', label: 'APMC Rates', icon: BarChart3 },
-  { path: '/soil-prediction', label: 'Soil AI', icon: Leaf },
-  { path: '/yojanas', label: 'Schemes', icon: Landmark },
-  { path: '/weather', label: 'Weather', icon: CloudSun },
-  { path: '/community', label: 'Community', icon: MessageCircle },
-  { path: '/vendor', label: 'Vendor', icon: Package },
-  { path: '/admin', label: 'Admin', icon: Shield },
-];
-
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { user, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Build nav items based on role
+  const navItems = [
+    { path: '/dashboard', label: 'Dashboard', icon: Sprout, roles: ['farmer', 'vendor', 'admin'] },
+    { path: '/marketplace', label: 'Marketplace', icon: ShoppingCart, roles: ['farmer', 'vendor', 'admin'] },
+    { path: '/market-rates', label: 'APMC Rates', icon: BarChart3, roles: ['farmer', 'vendor', 'admin'] },
+    { path: '/soil-prediction', label: 'Soil AI', icon: Leaf, roles: ['farmer', 'admin'] },
+    { path: '/yojanas', label: 'Schemes', icon: Landmark, roles: ['farmer', 'admin'] },
+    { path: '/weather', label: 'Weather', icon: CloudSun, roles: ['farmer', 'vendor', 'admin'] },
+    { path: '/community', label: 'Community', icon: MessageCircle, roles: ['farmer', 'vendor', 'admin'] },
+    { path: '/vendor', label: 'Vendor', icon: Package, roles: ['vendor'] },
+    { path: '/admin', label: 'Admin', icon: Shield, roles: ['admin'] },
+  ];
+
+  const visibleNav = navItems.filter(item => !role || item.roles.includes(role));
 
   return (
     <div className="min-h-screen bg-background">
@@ -31,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-0.5">
-            {navItems.map((item) => {
+            {visibleNav.map((item) => {
               const Icon = item.icon;
               const active = location.pathname === item.path;
               return (
@@ -57,6 +60,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="hidden sm:flex items-center gap-2 rounded-full bg-muted px-3 py-1.5">
                   <User className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm text-foreground">{user.email?.split('@')[0]}</span>
+                  {role && <span className="text-xs text-muted-foreground capitalize">({role})</span>}
                 </div>
                 <Button variant="ghost" size="icon" onClick={signOut}>
                   <LogOut className="h-4 w-4" />
@@ -76,7 +80,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {mobileOpen && (
           <div className="lg:hidden border-t border-border bg-card p-4 animate-fade-in">
             <nav className="flex flex-col gap-1">
-              {navItems.map((item) => {
+              {visibleNav.map((item) => {
                 const Icon = item.icon;
                 const active = location.pathname === item.path;
                 return (

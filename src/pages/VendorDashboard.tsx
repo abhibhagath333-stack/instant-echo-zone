@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,12 +25,21 @@ interface Product {
 const categories = ['Seeds', 'Fertilizers', 'Pesticides', 'Tools', 'Equipment', 'Irrigation', 'Other'];
 
 export default function VendorDashboard() {
-  const { user } = useAuth();
+  const { user, hasRole, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [form, setForm] = useState({ name: '', description: '', price: '', category: 'Seeds', stock: '', image_url: '' });
+
+  useEffect(() => {
+    if (!authLoading && !hasRole('vendor')) {
+      toast.error('Access denied. Vendor account required.');
+      navigate('/vendor-auth');
+      return;
+    }
+  }, [authLoading]);
 
   const fetchProducts = async () => {
     if (!user) return;
@@ -38,7 +48,7 @@ export default function VendorDashboard() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchProducts(); }, [user]);
+  useEffect(() => { if (user && hasRole('vendor')) fetchProducts(); }, [user, authLoading]);
 
   const resetForm = () => {
     setForm({ name: '', description: '', price: '', category: 'Seeds', stock: '', image_url: '' });
@@ -92,6 +102,8 @@ export default function VendorDashboard() {
 
   const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
   const totalValue = products.reduce((sum, p) => sum + p.price * (p.stock || 0), 0);
+
+  if (authLoading) return <div className="container py-16 text-center text-muted-foreground">Loading...</div>;
 
   return (
     <div className="container py-8 space-y-6">
@@ -151,7 +163,6 @@ export default function VendorDashboard() {
         </Dialog>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'Total Products', value: products.length, icon: ShoppingBag },
@@ -175,7 +186,6 @@ export default function VendorDashboard() {
         })}
       </div>
 
-      {/* Products list */}
       {loading ? (
         <div className="text-center py-8 text-muted-foreground">Loading products...</div>
       ) : products.length === 0 ? (

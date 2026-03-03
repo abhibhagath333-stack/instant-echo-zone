@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sprout } from 'lucide-react';
+import { Sprout, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Auth() {
@@ -43,10 +43,10 @@ export default function Auth() {
       <Card className="w-full max-w-md shadow-elevated">
         <CardHeader className="text-center">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-            <Sprout className="h-7 w-7 text-primary" />
+            <User className="h-7 w-7 text-primary" />
           </div>
-          <CardTitle className="font-display text-2xl">{isLogin ? 'Welcome Back' : 'Join AgriDigital'}</CardTitle>
-          <CardDescription>{isLogin ? 'Sign in to your account' : 'Create your farmer account'}</CardDescription>
+          <CardTitle className="font-display text-2xl">{isLogin ? 'Farmer Login' : 'Farmer Registration'}</CardTitle>
+          <CardDescription>{isLogin ? 'Sign in to your farmer account' : 'Create your farmer account'}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -74,6 +74,13 @@ export default function Auth() {
               {isLogin ? 'Sign Up' : 'Sign In'}
             </button>
           </p>
+          <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
+            <p className="text-xs text-center text-muted-foreground">Login as a different role?</p>
+            <div className="flex gap-2 justify-center">
+              <Button variant="outline" size="sm" onClick={() => navigate('/vendor-auth')} className="text-xs">Vendor Login</Button>
+              <Button variant="outline" size="sm" onClick={() => navigate('/admin-auth')} className="text-xs">Admin Login</Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
