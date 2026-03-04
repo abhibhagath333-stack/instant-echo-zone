@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield } from 'lucide-react';
+import { Shield, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminAuth() {
@@ -16,14 +16,17 @@ export default function AdminAuth() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
+  const goBack = () => {
+    if (window.history.length > 1) navigate(-1);
+    else navigate('/');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       const { error } = await signIn(email, password);
       if (error) throw error;
-      
-      // Verify admin role
       const { data: session } = await supabase.auth.getSession();
       if (session?.session?.user) {
         const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', session.session.user.id).eq('role', 'admin').single();
@@ -45,8 +48,11 @@ export default function AdminAuth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-hero p-4">
-      <Card className="w-full max-w-md shadow-elevated">
+      <Card className="w-full max-w-md shadow-elevated relative">
         <CardHeader className="text-center">
+          <Button variant="ghost" size="sm" onClick={goBack} className="absolute left-4 top-4 text-muted-foreground">
+            <ArrowLeft className="h-4 w-4 mr-1" /> Back
+          </Button>
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
             <Shield className="h-7 w-7 text-destructive" />
           </div>
@@ -57,7 +63,7 @@ export default function AdminAuth() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Admin Email</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@agridigital.com" required />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@digitalagri.com" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>

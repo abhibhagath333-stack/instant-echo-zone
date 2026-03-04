@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package } from 'lucide-react';
+import { Package, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function VendorAuth() {
@@ -23,6 +23,11 @@ export default function VendorAuth() {
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
+  const goBack = () => {
+    if (window.history.length > 1) navigate(-1);
+    else navigate('/');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -30,60 +35,44 @@ export default function VendorAuth() {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) throw error;
-        // Check if user has vendor role
         const { data: session } = await supabase.auth.getSession();
         if (session?.session?.user) {
           const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', session.session.user.id).eq('role', 'vendor').single();
           if (!roleData) {
-            // Check if they have a pending registration
             const { data: regData } = await supabase.from('vendor_registrations').select('status').eq('user_id', session.session.user.id).order('created_at', { ascending: false }).limit(1).single();
             if (regData?.status === 'pending') {
               toast.info('Your vendor registration is pending admin approval.');
-              await supabase.auth.signOut();
-              setLoading(false);
-              return;
             } else if (regData?.status === 'rejected') {
               toast.error('Your vendor registration was rejected. Contact admin.');
-              await supabase.auth.signOut();
-              setLoading(false);
-              return;
             } else {
               toast.error('You are not registered as a vendor.');
-              await supabase.auth.signOut();
-              setLoading(false);
-              return;
             }
+            await supabase.auth.signOut();
+            setLoading(false);
+            return;
           }
         }
         toast.success('Welcome back, Vendor!');
         navigate('/vendor');
       } else {
-        // Sign up as farmer first, then submit vendor registration
         const { error } = await signUp(email, password, fullName);
         if (error) throw error;
-        
-        // We need to sign in to submit the registration
         const { error: signInError } = await signIn(email, password);
         if (signInError) {
           toast.success('Account created! Please verify your email first, then come back to complete vendor registration.');
           setLoading(false);
           return;
         }
-
         const { data: session } = await supabase.auth.getSession();
         if (session?.session?.user) {
-          const { error: regError } = await supabase.from('vendor_registrations').insert({
+          await supabase.from('vendor_registrations').insert({
             user_id: session.session.user.id,
             business_name: businessName,
             business_type: businessType || null,
             phone: phone || null,
             address: address || null,
           });
-          if (regError) {
-            toast.error('Registration submitted but vendor application failed. Try again.');
-          } else {
-            toast.success('Vendor registration submitted! Wait for admin approval.');
-          }
+          toast.success('Vendor registration submitted! Wait for admin approval.');
           await supabase.auth.signOut();
         }
       }
@@ -96,8 +85,11 @@ export default function VendorAuth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-hero p-4">
-      <Card className="w-full max-w-md shadow-elevated">
+      <Card className="w-full max-w-md shadow-elevated relative">
         <CardHeader className="text-center">
+          <Button variant="ghost" size="sm" onClick={goBack} className="absolute left-4 top-4 text-muted-foreground">
+            <ArrowLeft className="h-4 w-4 mr-1" /> Back
+          </Button>
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-info/10">
             <Package className="h-7 w-7 text-info" />
           </div>
