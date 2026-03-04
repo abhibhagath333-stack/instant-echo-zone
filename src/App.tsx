@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import VendorAuth from "./pages/VendorAuth";
 import AdminAuth from "./pages/AdminAuth";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Marketplace from "./pages/Marketplace";
 import MarketRates from "./pages/MarketRates";
@@ -38,7 +39,9 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/vendor-auth" element={<VendorAuth />} />
           <Route path="/admin-auth" element={<AdminAuth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/e-commerce" element={<AppLayout><Marketplace /></AppLayout>} />
           <Route path="/marketplace" element={<AppLayout><Marketplace /></AppLayout>} />
           <Route path="/market-rates" element={<AppLayout><MarketRates /></AppLayout>} />
           <Route path="/yojanas" element={<AppLayout><Yojanas /></AppLayout>} />

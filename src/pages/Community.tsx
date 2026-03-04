@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { MessageCircle, Send, User, Trash2 } from 'lucide-react';
+import { MessageCircle, Send, User, Trash2, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -12,6 +12,7 @@ interface Post {
   id: string;
   user_id: string;
   content: string;
+  image_url: string | null;
   created_at: string;
 }
 
@@ -20,6 +21,9 @@ export default function Community() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchPosts = async () => {
     const { data } = await supabase
@@ -32,32 +36,34 @@ export default function Community() {
 
   useEffect(() => {
     fetchPosts();
-
     const channel = supabase
       .channel('posts-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
         fetchPosts();
       })
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const handlePost = async () => {
-    if (!newPost.trim()) return;
-    if (!user) {
-      toast.error('Please sign in to post');
-      return;
+    if (!newPost.trim() && !imageFile) return;
+    if (!user) { toast.error('Please sign in to post'); return; }
+    setUploading(true);
+
+    let imageUrl: string | null = null;
+    if (imageFile) {
+      const ext = imageFile.name.split('.').pop();
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from('post-images').upload(path, imageFile);
+      if (uploadError) { toast.error('Image upload failed'); setUploading(false); return; }
+      const { data: urlData } = supabase.storage.from('post-images').getPublicUrl(path);
+      imageUrl = urlData.publicUrl;
     }
-    const { error } = await supabase.from('posts').insert({ user_id: user.id, content: newPost.trim() });
-    if (error) {
-      toast.error('Failed to post');
-    } else {
-      setNewPost('');
-      toast.success('Post shared!');
-    }
+
+    const { error } = await supabase.from('posts').insert({ user_id: user.id, content: newPost.trim(), image_url: imageUrl });
+    if (error) { toast.error('Failed to post'); }
+    else { setNewPost(''); setImageFile(null); toast.success('Post shared!'); }
+    setUploading(false);
   };
 
   const handleDelete = async (postId: string) => {
@@ -85,9 +91,20 @@ export default function Community() {
             rows={3}
             disabled={!user}
           />
-          <div className="flex justify-end">
-            <Button onClick={handlePost} disabled={!user || !newPost.trim()} size="sm">
-              <Send className="h-4 w-4 mr-1" /> Post
+          {imageFile && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <ImagePlus className="h-4 w-4" />
+              <span>{imageFile.name}</span>
+              <button onClick={() => setImageFile(null)} className="text-destructive text-xs hover:underline">Remove</button>
+            </div>
+          )}
+          <div className="flex justify-between items-center">
+            <input type="file" accept="image/*" ref={fileRef} className="hidden" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
+            <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={!user}>
+              <ImagePlus className="h-4 w-4 mr-1" /> Image
+            </Button>
+            <Button onClick={handlePost} disabled={!user || (!newPost.trim() && !imageFile) || uploading} size="sm">
+              <Send className="h-4 w-4 mr-1" /> {uploading ? 'Posting...' : 'Post'}
             </Button>
           </div>
         </CardContent>
@@ -123,7 +140,12 @@ export default function Community() {
                     </Button>
                   )}
                 </div>
-                <p className="text-foreground whitespace-pre-wrap">{post.content}</p>
+                {post.content && <p className="text-foreground whitespace-pre-wrap">{post.content}</p>}
+                {post.image_url && (
+                  <div className="mt-3 rounded-lg overflow-hidden bg-muted">
+                    <img src={post.image_url} alt="Post image" className="w-full max-h-96 object-cover" />
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

@@ -23,39 +23,21 @@ const benefits = [
 export default function Index() {
   return (
     <div className="min-h-screen">
-      {/* Navbar */}
       <header className="absolute top-0 left-0 right-0 z-50">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <Sprout className="h-7 w-7 text-primary-foreground" />
-            <span className="font-display text-xl font-bold text-primary-foreground">AgriDigital</span>
+            <span className="font-display text-xl font-bold text-primary-foreground">Digital-Agri</span>
           </Link>
           <div className="flex items-center gap-2">
-            <Link to="/auth">
-              <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                Farmer
-              </Button>
-            </Link>
-            <Link to="/vendor-auth">
-              <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                Vendor
-              </Button>
-            </Link>
-            <Link to="/admin-auth">
-              <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                Admin
-              </Button>
-            </Link>
-            <Link to="/auth">
-              <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
-                Get Started
-              </Button>
-            </Link>
+            <Link to="/auth"><Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">Farmer</Button></Link>
+            <Link to="/vendor-auth"><Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">Vendor</Button></Link>
+            <Link to="/admin-auth"><Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">Admin</Button></Link>
+            <Link to="/auth"><Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">Get Started</Button></Link>
           </div>
         </div>
       </header>
 
-      {/* Hero */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt="Indian farmland at golden hour" className="h-full w-full object-cover" />
@@ -66,26 +48,15 @@ export default function Index() {
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight">
               Empowering Farmers with <span className="text-secondary">Digital Intelligence</span>
             </h1>
-            <p className="text-lg text-primary-foreground/80 max-w-xl">
-              A smart, unified platform for soil analysis, crop prediction, live market rates, weather forecasts, e-commerce, and community support.
-            </p>
+            <p className="text-lg text-primary-foreground/80 max-w-xl">A smart, unified platform for soil analysis, crop prediction, live market rates, weather forecasts, e-commerce, and community support.</p>
             <div className="flex flex-wrap gap-3">
-              <Link to="/auth">
-                <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold">
-                  Start Free <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link to="/market-rates">
-                <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                  View Live Rates
-                </Button>
-              </Link>
+              <Link to="/auth"><Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold">Start Free <ArrowRight className="ml-2 h-4 w-4" /></Button></Link>
+              <Link to="/market-rates"><Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">View Live Rates</Button></Link>
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-2 pt-4">
               {benefits.map((b) => (
                 <div key={b} className="flex items-center gap-2 text-sm text-primary-foreground/70">
-                  <CheckCircle className="h-4 w-4 text-secondary" />
-                  {b}
+                  <CheckCircle className="h-4 w-4 text-secondary" />{b}
                 </div>
               ))}
             </div>
@@ -93,7 +64,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Features */}
       <section className="py-20 bg-background">
         <div className="container space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -106,9 +76,7 @@ export default function Index() {
               return (
                 <Card key={f.title} className="shadow-soft hover:shadow-elevated transition-all duration-300 hover:-translate-y-1">
                   <CardContent className="p-6 space-y-3">
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${f.color}`}>
-                      <Icon className="h-6 w-6" />
-                    </div>
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${f.color}`}><Icon className="h-6 w-6" /></div>
                     <h3 className="font-display text-lg font-semibold text-foreground">{f.title}</h3>
                     <p className="text-sm text-muted-foreground">{f.desc}</p>
                   </CardContent>
@@ -119,23 +87,17 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="py-16 bg-gradient-hero">
         <div className="container text-center space-y-6">
           <h2 className="font-display text-3xl font-bold text-primary-foreground">Ready to Transform Your Farming?</h2>
-          <p className="text-primary-foreground/80 max-w-xl mx-auto">Join thousands of farmers using AgriDigital for smarter, more profitable agriculture.</p>
-          <Link to="/auth">
-            <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold">
-              Join AgriDigital Today <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+          <p className="text-primary-foreground/80 max-w-xl mx-auto">Join thousands of farmers using Digital-Agri for smarter, more profitable agriculture.</p>
+          <Link to="/auth"><Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold">Join Digital-Agri Today <ArrowRight className="ml-2 h-4 w-4" /></Button></Link>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-border bg-card py-8">
         <div className="container text-center text-sm text-muted-foreground">
-          <p className="font-display text-foreground text-lg mb-2">AgriDigital — Digital Agriculture Support System</p>
+          <p className="font-display text-foreground text-lg mb-2">Digital-Agri — Digital Agriculture Support System</p>
           <p>JSS College of Arts Commerce and Science, Mysuru</p>
         </div>
       </footer>
