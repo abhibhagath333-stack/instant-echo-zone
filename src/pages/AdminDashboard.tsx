@@ -11,15 +11,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Shield, Users, Package, MessageCircle, Trash2, CheckCircle, XCircle, Clock, Plus, Search, Landmark, Pencil } from 'lucide-react';
+import { Shield, Users, Package, MessageCircle, Trash2, CheckCircle, XCircle, Clock, Plus, Search, Landmark, Pencil, BarChart3, ShoppingBag, Leaf, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface Profile { id: string; user_id: string; full_name: string | null; role: string | null; location: string | null; phone: string | null; created_at: string | null; }
 interface VendorRegistration { id: string; user_id: string; business_name: string; business_type: string | null; phone: string | null; address: string | null; status: string; admin_notes: string | null; created_at: string; }
 interface Post { id: string; content: string; user_id: string; created_at: string | null; }
 interface Yojana { id: string; title: string; description: string | null; benefits: string | null; eligibility: string | null; link: string | null; }
 interface UserRole { user_id: string; role: string; }
+
+const CHART_COLORS = ['hsl(153, 60%, 40%)', 'hsl(42, 80%, 55%)', 'hsl(200, 70%, 45%)', 'hsl(0, 72%, 51%)'];
 
 export default function AdminDashboard() {
   const { user, hasRole, loading: authLoading } = useAuth();
@@ -30,11 +33,12 @@ export default function AdminDashboard() {
   const [vendorRegs, setVendorRegs] = useState<VendorRegistration[]>([]);
   const [yojanas, setYojanas] = useState<Yojana[]>([]);
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [predictions, setPredictions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userSearch, setUserSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
 
-  // Yojana form
   const [yojanaDialog, setYojanaDialog] = useState(false);
   const [yojanaForm, setYojanaForm] = useState({ title: '', description: '', benefits: '', eligibility: '', link: '' });
   const [editingYojana, setEditingYojana] = useState<Yojana | null>(null);
@@ -49,13 +53,17 @@ export default function AdminDashboard() {
         supabase.from('vendor_registrations').select('*').order('created_at', { ascending: false }),
         supabase.from('yojanas').select('*').order('created_at', { ascending: false }),
         supabase.from('user_roles').select('*'),
-      ]).then(([p, pr, po, vr, y, ur]) => {
+        supabase.from('orders').select('*').order('created_at', { ascending: false }),
+        supabase.from('soil_predictions').select('*').order('created_at', { ascending: false }),
+      ]).then(([p, pr, po, vr, y, ur, o, sp]) => {
         setProfiles(p.data || []);
         setProducts(pr.data || []);
         setPosts(po.data || []);
         setVendorRegs(vr.data || []);
         setYojanas(y.data || []);
         setUserRoles(ur.data || []);
+        setOrders(o.data || []);
+        setPredictions(sp.data || []);
         setLoading(false);
       });
     }
@@ -82,7 +90,6 @@ export default function AdminDashboard() {
     toast.success('Post removed');
   };
 
-  // Yojana CRUD
   const resetYojanaForm = () => { setYojanaForm({ title: '', description: '', benefits: '', eligibility: '', link: '' }); setEditingYojana(null); };
   const openEditYojana = (y: Yojana) => {
     setEditingYojana(y);
@@ -109,18 +116,26 @@ export default function AdminDashboard() {
   };
 
   const pendingCount = vendorRegs.filter(r => r.status === 'pending').length;
-
   const filteredProfiles = profiles.filter(p => {
     const matchSearch = !userSearch || p.full_name?.toLowerCase().includes(userSearch.toLowerCase()) || p.phone?.includes(userSearch);
     const matchRole = roleFilter === 'all' || getUserRole(p.user_id) === roleFilter;
     return matchSearch && matchRole;
   });
 
+  // Analytics data
+  const roleCounts = userRoles.reduce((acc, r) => { acc[r.role] = (acc[r.role] || 0) + 1; return acc; }, {} as Record<string, number>);
+  const roleChartData = Object.entries(roleCounts).map(([name, value]) => ({ name, value }));
+  const orderStatusCounts = orders.reduce((acc, o) => { acc[o.status] = (acc[o.status] || 0) + 1; return acc; }, {} as Record<string, number>);
+  const orderChartData = Object.entries(orderStatusCounts).map(([name, value]) => ({ name: name.replace('_', ' '), value }));
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+
   const stats = [
     { label: 'Total Users', value: profiles.length, icon: Users, color: 'bg-primary/10 text-primary' },
     { label: 'Pending Vendors', value: pendingCount, icon: Clock, color: 'bg-warning/10 text-warning' },
     { label: 'Total Products', value: products.length, icon: Package, color: 'bg-info/10 text-info' },
-    { label: 'Community Posts', value: posts.length, icon: MessageCircle, color: 'bg-success/10 text-success' },
+    { label: 'Total Orders', value: orders.length, icon: ShoppingBag, color: 'bg-success/10 text-success' },
+    { label: 'Revenue', value: `₹${totalRevenue.toLocaleString()}`, icon: TrendingUp, color: 'bg-secondary/10 text-secondary' },
+    { label: 'Predictions', value: predictions.length, icon: Leaf, color: 'bg-primary/10 text-primary' },
   ];
 
   if (authLoading || loading) return <div className="container py-16 text-center text-muted-foreground">Loading...</div>;
@@ -131,10 +146,10 @@ export default function AdminDashboard() {
         <h1 className="font-display text-3xl font-bold text-foreground flex items-center gap-3">
           <Shield className="h-8 w-8 text-primary" /> Admin Dashboard
         </h1>
-        <p className="text-muted-foreground mt-1">Manage users, approve vendors, moderate content & manage schemes</p>
+        <p className="text-muted-foreground mt-1">Manage users, content, analytics & schemes</p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {stats.map((s) => { const Icon = s.icon; return (
           <Card key={s.label} className="shadow-soft"><CardContent className="flex items-center gap-3 p-4">
             <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${s.color}`}><Icon className="h-5 w-5" /></div>
@@ -143,14 +158,84 @@ export default function AdminDashboard() {
         ); })}
       </div>
 
-      <Tabs defaultValue="vendors">
+      <Tabs defaultValue="analytics">
         <TabsList className="flex-wrap">
+          <TabsTrigger value="analytics"><BarChart3 className="h-4 w-4 mr-1" /> Analytics</TabsTrigger>
           <TabsTrigger value="vendors">Vendors {pendingCount > 0 && <Badge variant="destructive" className="ml-1.5 h-5 px-1.5 text-[10px]">{pendingCount}</Badge>}</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="yojanas">Yojanas</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
           <TabsTrigger value="posts">Posts</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="analytics">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="shadow-soft">
+              <CardHeader><CardTitle className="font-display text-lg">Users by Role</CardTitle></CardHeader>
+              <CardContent>
+                {roleChartData.length === 0 ? (
+                  <p className="text-center py-8 text-muted-foreground">No user data</p>
+                ) : (
+                  <div className="h-[280px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={roleChartData} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                          {roleChartData.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-soft">
+              <CardHeader><CardTitle className="font-display text-lg">Order Status</CardTitle></CardHeader>
+              <CardContent>
+                {orderChartData.length === 0 ? (
+                  <p className="text-center py-8 text-muted-foreground">No orders yet</p>
+                ) : (
+                  <div className="h-[280px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={orderChartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                        <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                        <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                        <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
+                        <Bar dataKey="value" fill="hsl(153, 50%, 30%)" radius={[6, 6, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-soft lg:col-span-2">
+              <CardHeader><CardTitle className="font-display text-lg">Quick Summary</CardTitle></CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 text-center">
+                    <p className="text-2xl font-bold text-primary">{profiles.length}</p>
+                    <p className="text-xs text-muted-foreground">Registered Users</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-success/5 border border-success/10 text-center">
+                    <p className="text-2xl font-bold text-success">{orders.filter(o => o.status === 'delivered').length}</p>
+                    <p className="text-xs text-muted-foreground">Delivered Orders</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-warning/5 border border-warning/10 text-center">
+                    <p className="text-2xl font-bold text-warning">{predictions.length}</p>
+                    <p className="text-xs text-muted-foreground">Soil Predictions</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-info/5 border border-info/10 text-center">
+                    <p className="text-2xl font-bold text-info">{posts.length}</p>
+                    <p className="text-xs text-muted-foreground">Community Posts</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
         <TabsContent value="vendors">
           <Card className="shadow-soft">

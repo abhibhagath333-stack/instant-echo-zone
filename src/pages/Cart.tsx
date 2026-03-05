@@ -112,7 +112,7 @@ export default function Cart() {
           <CardContent className="text-center py-12 space-y-3">
             <Package className="h-12 w-12 mx-auto text-muted-foreground/30" />
             <p className="text-muted-foreground">Your cart is empty</p>
-            <Button variant="outline" onClick={() => navigate('/marketplace')}>Browse Products</Button>
+            <Button variant="outline" onClick={() => navigate('/e-commerce')}>Browse Products</Button>
           </CardContent>
         </Card>
       ) : (
