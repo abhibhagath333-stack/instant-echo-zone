@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { MessageCircle, Send, User, Trash2, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import PageHero from '@/components/PageHero';
+import communityHero from '@/assets/community-hero.jpg';
 
 interface Post {
   id: string;
