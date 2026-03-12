@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Landmark, ExternalLink, CheckCircle } from 'lucide-react';
+import PageHero from '@/components/PageHero';
+import yojanasHero from '@/assets/yojanas-hero.jpg';
 
 interface Yojana {
   id: string;
