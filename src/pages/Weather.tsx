@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CloudSun, Droplets, Wind, Thermometer, Sun, CloudRain, Cloud } from 'lucide-react';
+import PageHero from '@/components/PageHero';
+import weatherHero from '@/assets/weather-hero.jpg';
 
 const forecast = [
   { day: 'Today', temp: '32°C', condition: 'Sunny', humidity: '45%', wind: '12 km/h', icon: Sun },
