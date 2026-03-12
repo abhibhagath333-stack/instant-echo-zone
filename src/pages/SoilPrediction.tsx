@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Leaf, FlaskConical, Loader2, Sprout, Droplets, Thermometer, CloudRain } from 'lucide-react';
 import { toast } from 'sonner';
+import PageHero from '@/components/PageHero';
+import soilHero from '@/assets/soil-analysis-hero.jpg';
 
 interface PredictionResult {
   soil_type: string;
