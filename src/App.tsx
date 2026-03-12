@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import VendorAuth from "./pages/VendorAuth";
@@ -40,18 +41,18 @@ const App = () => (
           <Route path="/vendor-auth" element={<VendorAuth />} />
           <Route path="/admin-auth" element={<AdminAuth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
-          <Route path="/e-commerce" element={<AppLayout><Marketplace /></AppLayout>} />
-          <Route path="/marketplace" element={<AppLayout><Marketplace /></AppLayout>} />
-          <Route path="/market-rates" element={<AppLayout><MarketRates /></AppLayout>} />
-          <Route path="/yojanas" element={<AppLayout><Yojanas /></AppLayout>} />
-          <Route path="/weather" element={<AppLayout><Weather /></AppLayout>} />
-          <Route path="/community" element={<AppLayout><Community /></AppLayout>} />
-          <Route path="/soil-prediction" element={<AppLayout><SoilPrediction /></AppLayout>} />
-          <Route path="/vendor" element={<AppLayout><VendorDashboard /></AppLayout>} />
-          <Route path="/admin" element={<AppLayout><AdminDashboard /></AppLayout>} />
-          <Route path="/cart" element={<AppLayout><Cart /></AppLayout>} />
-          <Route path="/orders" element={<AppLayout><Orders /></AppLayout>} />
+          <Route path="/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
+          <Route path="/e-commerce" element={<ProtectedRoute><AppLayout><Marketplace /></AppLayout></ProtectedRoute>} />
+          <Route path="/marketplace" element={<ProtectedRoute><AppLayout><Marketplace /></AppLayout></ProtectedRoute>} />
+          <Route path="/market-rates" element={<ProtectedRoute><AppLayout><MarketRates /></AppLayout></ProtectedRoute>} />
+          <Route path="/yojanas" element={<ProtectedRoute><AppLayout><Yojanas /></AppLayout></ProtectedRoute>} />
+          <Route path="/weather" element={<ProtectedRoute><AppLayout><Weather /></AppLayout></ProtectedRoute>} />
+          <Route path="/community" element={<ProtectedRoute><AppLayout><Community /></AppLayout></ProtectedRoute>} />
+          <Route path="/soil-prediction" element={<ProtectedRoute><AppLayout><SoilPrediction /></AppLayout></ProtectedRoute>} />
+          <Route path="/vendor" element={<ProtectedRoute requiredRole="vendor"><AppLayout><VendorDashboard /></AppLayout></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AppLayout><AdminDashboard /></AppLayout></ProtectedRoute>} />
+          <Route path="/cart" element={<ProtectedRoute><AppLayout><Cart /></AppLayout></ProtectedRoute>} />
+          <Route path="/orders" element={<ProtectedRoute><AppLayout><Orders /></AppLayout></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
