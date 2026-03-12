@@ -96,7 +96,6 @@ export default function SoilPrediction() {
   return (
     <div className="container py-8 space-y-6 max-w-4xl">
       <PageHero image={soilHero} title="Soil Classification & Crop Prediction" subtitle="Enter your soil parameters to get AI-powered crop recommendations" icon={<Leaf className="h-8 w-8 text-primary-foreground" />} />
-      </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="shadow-soft">
