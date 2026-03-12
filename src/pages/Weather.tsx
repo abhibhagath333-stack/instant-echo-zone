@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CloudSun, Droplets, Wind, Thermometer, Sun, CloudRain, Cloud } from 'lucide-react';
+import PageHero from '@/components/PageHero';
+import weatherHero from '@/assets/weather-hero.jpg';
 
 const forecast = [
   { day: 'Today', temp: '32°C', condition: 'Sunny', humidity: '45%', wind: '12 km/h', icon: Sun },
@@ -18,13 +20,7 @@ const tips = [
 export default function Weather() {
   return (
     <div className="container py-8 space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-bold text-foreground flex items-center gap-3">
-          <CloudSun className="h-8 w-8 text-warning" />
-          Weather Forecast
-        </h1>
-        <p className="text-muted-foreground mt-1">Plan your farming activities with accurate weather data</p>
-      </div>
+      <PageHero image={weatherHero} title="Weather Forecast" subtitle="Plan your farming activities with accurate weather data" icon={<CloudSun className="h-8 w-8 text-primary-foreground" />} />
 
       {/* Today's highlight */}
       <Card className="bg-gradient-hero text-primary-foreground shadow-elevated overflow-hidden">

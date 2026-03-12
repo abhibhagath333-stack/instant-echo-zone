@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Leaf, FlaskConical, Loader2, Sprout, Droplets, Thermometer, CloudRain } from 'lucide-react';
 import { toast } from 'sonner';
+import PageHero from '@/components/PageHero';
+import soilHero from '@/assets/soil-analysis-hero.jpg';
 
 interface PredictionResult {
   soil_type: string;
@@ -93,15 +95,7 @@ export default function SoilPrediction() {
 
   return (
     <div className="container py-8 space-y-6 max-w-4xl">
-      <div>
-        <h1 className="font-display text-3xl font-bold text-foreground flex items-center gap-3">
-          <Leaf className="h-8 w-8 text-success" />
-          Soil Classification & Crop Prediction
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Enter your soil parameters to get AI-powered crop recommendations
-        </p>
-      </div>
+      <PageHero image={soilHero} title="Soil Classification & Crop Prediction" subtitle="Enter your soil parameters to get AI-powered crop recommendations" icon={<Leaf className="h-8 w-8 text-primary-foreground" />} />
 
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="shadow-soft">

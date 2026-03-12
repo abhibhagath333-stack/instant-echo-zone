@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { MessageCircle, Send, User, Trash2, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import PageHero from '@/components/PageHero';
+import communityHero from '@/assets/community-hero.jpg';
 
 interface Post {
   id: string;
@@ -73,14 +75,7 @@ export default function Community() {
 
   return (
     <div className="container py-8 space-y-6 max-w-2xl">
-      <div>
-        <h1 className="font-display text-3xl font-bold text-foreground flex items-center gap-3">
-          <MessageCircle className="h-8 w-8 text-success" />
-          Farmer Community
-        </h1>
-        <p className="text-muted-foreground mt-1">Share experiences, ask questions & connect with farmers</p>
-        <p className="text-xs text-primary mt-1">✨ Posts update in real-time!</p>
-      </div>
+      <PageHero image={communityHero} title="Farmer Community" subtitle="Share experiences, ask questions & connect with farmers" icon={<MessageCircle className="h-8 w-8 text-primary-foreground" />} />
 
       <Card className="shadow-soft">
         <CardContent className="p-4 space-y-3">

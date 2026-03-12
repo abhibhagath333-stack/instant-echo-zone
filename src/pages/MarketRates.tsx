@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TrendingUp, BarChart3, Search, History } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import PageHero from '@/components/PageHero';
+import marketHero from '@/assets/market-rates-hero.jpg';
 
 interface MarketRate {
   id: string;
@@ -71,13 +73,7 @@ export default function MarketRates() {
 
   return (
     <div className="container py-8 space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-bold text-foreground flex items-center gap-3">
-          <BarChart3 className="h-8 w-8 text-primary" />
-          APMC Live Market Rates
-        </h1>
-        <p className="text-muted-foreground mt-1">Daily crop prices from nearby APMC markets</p>
-      </div>
+      <PageHero image={marketHero} title="APMC Live Market Rates" subtitle="Daily crop prices from nearby APMC markets" icon={<BarChart3 className="h-8 w-8 text-primary-foreground" />} />
 
       {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-3">

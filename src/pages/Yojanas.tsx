@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Landmark, ExternalLink, CheckCircle } from 'lucide-react';
+import PageHero from '@/components/PageHero';
+import yojanasHero from '@/assets/yojanas-hero.jpg';
 
 interface Yojana {
   id: string;
@@ -27,13 +29,7 @@ export default function Yojanas() {
 
   return (
     <div className="container py-8 space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-bold text-foreground flex items-center gap-3">
-          <Landmark className="h-8 w-8 text-secondary" />
-          Government Yojanas & Schemes
-        </h1>
-        <p className="text-muted-foreground mt-1">Stay updated on schemes that benefit farmers</p>
-      </div>
+      <PageHero image={yojanasHero} title="Government Yojanas & Schemes" subtitle="Stay updated on schemes that benefit farmers" icon={<Landmark className="h-8 w-8 text-primary-foreground" />} />
 
       {loading ? (
         <div className="grid gap-4">

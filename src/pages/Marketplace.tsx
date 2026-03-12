@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ShoppingCart, Search, ClipboardList, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import PageHero from '@/components/PageHero';
+import ecommerceHero from '@/assets/ecommerce-hero.jpg';
 
 interface Product {
   id: string;
@@ -85,20 +87,18 @@ export default function Marketplace() {
 
   return (
     <div className="container py-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-bold text-foreground flex items-center gap-3">
-            <ShoppingCart className="h-8 w-8 text-primary" /> E-Commerce
-          </h1>
-          <p className="text-muted-foreground">Seeds, fertilizers, equipment & more</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {user && (
+      <PageHero image={ecommerceHero} title="E-Commerce" subtitle="Seeds, fertilizers, equipment & more for your farm" icon={<ShoppingCart className="h-8 w-8 text-primary-foreground" />} />
+      <div className="flex items-center justify-end gap-3">
+        {user && (
+          <>
             <Link to="/cart">
               <Button variant="outline" size="sm"><ShoppingCart className="h-4 w-4 mr-1" /> Cart</Button>
             </Link>
-          )}
-        </div>
+            <Link to="/orders">
+              <Button variant="outline" size="sm"><ClipboardList className="h-4 w-4 mr-1" /> Orders</Button>
+            </Link>
+          </>
+        )}
       </div>
 
       <Tabs defaultValue="shop">
