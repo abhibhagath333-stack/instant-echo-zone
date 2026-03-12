@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ShoppingCart, Search, ClipboardList, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import PageHero from '@/components/PageHero';
+import ecommerceHero from '@/assets/ecommerce-hero.jpg';
 
 interface Product {
   id: string;
