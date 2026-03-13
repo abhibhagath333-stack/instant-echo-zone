@@ -26,6 +26,7 @@ export function useAuth() {
         setTimeout(() => fetchRole(session.user.id), 0);
       } else {
         setRole(null);
+        setRoleLoading(false);
       }
       setLoading(false);
     });
