@@ -68,7 +68,7 @@ export default function AdminDashboard() {
         setLoading(false);
       });
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, roleLoading]);
 
   const getUserRole = (userId: string) => userRoles.find(r => r.user_id === userId)?.role || 'farmer';
 
