@@ -85,6 +85,21 @@ export default function AdminDashboard() {
     toast.success(`${reg.business_name} rejected.`);
   };
 
+  const deleteVendor = async (reg: VendorRegistration) => {
+    // Remove vendor role
+    await supabase.from('user_roles').delete().eq('user_id', reg.user_id).eq('role', 'vendor');
+    // Reset to farmer role if no other roles
+    const { data: remainingRoles } = await supabase.from('user_roles').select('id').eq('user_id', reg.user_id);
+    if (!remainingRoles || remainingRoles.length === 0) {
+      await supabase.from('user_roles').insert({ user_id: reg.user_id, role: 'farmer' });
+    }
+    // Delete the registration
+    await supabase.from('vendor_registrations').delete().eq('id', reg.id);
+    setVendorRegs(prev => prev.filter(r => r.id !== reg.id));
+    setUserRoles(prev => prev.filter(r => !(r.user_id === reg.user_id && r.role === 'vendor')));
+    toast.success(`${reg.business_name} deleted.`);
+  };
+
   const deletePost = async (id: string) => {
     await supabase.from('posts').delete().eq('id', id);
     setPosts(prev => prev.filter(p => p.id !== id));
