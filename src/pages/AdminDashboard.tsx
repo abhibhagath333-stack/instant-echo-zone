@@ -269,12 +269,15 @@ export default function AdminDashboard() {
                         <TableCell><Badge variant={reg.status === 'approved' ? 'default' : reg.status === 'rejected' ? 'destructive' : 'secondary'}>{reg.status}</Badge></TableCell>
                         <TableCell className="text-sm text-muted-foreground">{new Date(reg.created_at).toLocaleDateString()}</TableCell>
                         <TableCell>
-                          {reg.status === 'pending' && (
-                            <div className="flex gap-1">
-                              <Button size="sm" variant="outline" className="text-success h-7 px-2" onClick={() => approveVendor(reg)}><CheckCircle className="h-3.5 w-3.5 mr-1" /> Approve</Button>
-                              <Button size="sm" variant="outline" className="text-destructive h-7 px-2" onClick={() => rejectVendor(reg)}><XCircle className="h-3.5 w-3.5 mr-1" /> Reject</Button>
-                            </div>
-                          )}
+                          <div className="flex gap-1">
+                            {reg.status === 'pending' && (
+                              <>
+                                <Button size="sm" variant="outline" className="text-success h-7 px-2" onClick={() => approveVendor(reg)}><CheckCircle className="h-3.5 w-3.5 mr-1" /> Approve</Button>
+                                <Button size="sm" variant="outline" className="text-destructive h-7 px-2" onClick={() => rejectVendor(reg)}><XCircle className="h-3.5 w-3.5 mr-1" /> Reject</Button>
+                              </>
+                            )}
+                            <Button size="sm" variant="outline" className="text-destructive h-7 px-2" onClick={() => deleteVendor(reg)}><Trash2 className="h-3.5 w-3.5 mr-1" /> Delete</Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
