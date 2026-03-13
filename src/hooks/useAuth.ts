@@ -9,6 +9,7 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
+  const [roleLoading, setRoleLoading] = useState(true);
 
   const fetchRole = async (userId: string) => {
     const { data } = await supabase.from('user_roles').select('role').eq('user_id', userId).limit(1).single();
