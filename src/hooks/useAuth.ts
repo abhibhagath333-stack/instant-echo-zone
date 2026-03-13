@@ -9,10 +9,13 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
+  const [roleLoading, setRoleLoading] = useState(true);
 
   const fetchRole = async (userId: string) => {
+    setRoleLoading(true);
     const { data } = await supabase.from('user_roles').select('role').eq('user_id', userId).limit(1).single();
     setRole((data?.role as AppRole) || 'farmer');
+    setRoleLoading(false);
   };
 
   useEffect(() => {
@@ -23,6 +26,7 @@ export function useAuth() {
         setTimeout(() => fetchRole(session.user.id), 0);
       } else {
         setRole(null);
+        setRoleLoading(false);
       }
       setLoading(false);
     });
@@ -58,5 +62,5 @@ export function useAuth() {
 
   const hasRole = (r: AppRole) => role === r;
 
-  return { user, session, loading, role, signUp, signIn, signOut, hasRole };
+  return { user, session, loading, roleLoading, role, signUp, signIn, signOut, hasRole };
 }
