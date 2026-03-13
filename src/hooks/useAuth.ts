@@ -62,5 +62,5 @@ export function useAuth() {
 
   const hasRole = (r: AppRole) => role === r;
 
-  return { user, session, loading, role, signUp, signIn, signOut, hasRole };
+  return { user, session, loading, roleLoading, role, signUp, signIn, signOut, hasRole };
 }
