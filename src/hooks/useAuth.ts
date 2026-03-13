@@ -12,8 +12,10 @@ export function useAuth() {
   const [roleLoading, setRoleLoading] = useState(true);
 
   const fetchRole = async (userId: string) => {
+    setRoleLoading(true);
     const { data } = await supabase.from('user_roles').select('role').eq('user_id', userId).limit(1).single();
     setRole((data?.role as AppRole) || 'farmer');
+    setRoleLoading(false);
   };
 
   useEffect(() => {
