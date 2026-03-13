@@ -44,7 +44,8 @@ export default function AdminDashboard() {
   const [editingYojana, setEditingYojana] = useState<Yojana | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !hasRole('admin')) { toast.error('Access denied. Admin only.'); navigate('/admin-auth'); return; }
+    if (authLoading || roleLoading) return;
+    if (!hasRole('admin')) { toast.error('Access denied. Admin only.'); navigate('/admin-auth'); return; }
     if (user && hasRole('admin')) {
       Promise.all([
         supabase.from('profiles').select('*').order('created_at', { ascending: false }),
