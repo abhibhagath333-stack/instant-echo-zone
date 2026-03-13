@@ -25,7 +25,7 @@ interface UserRole { user_id: string; role: string; }
 const CHART_COLORS = ['hsl(153, 60%, 40%)', 'hsl(42, 80%, 55%)', 'hsl(200, 70%, 45%)', 'hsl(0, 72%, 51%)'];
 
 export default function AdminDashboard() {
-  const { user, hasRole, loading: authLoading } = useAuth();
+  const { user, hasRole, loading: authLoading, roleLoading } = useAuth();
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -44,7 +44,8 @@ export default function AdminDashboard() {
   const [editingYojana, setEditingYojana] = useState<Yojana | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !hasRole('admin')) { toast.error('Access denied. Admin only.'); navigate('/admin-auth'); return; }
+    if (authLoading || roleLoading) return;
+    if (!hasRole('admin')) { toast.error('Access denied. Admin only.'); navigate('/admin-auth'); return; }
     if (user && hasRole('admin')) {
       Promise.all([
         supabase.from('profiles').select('*').order('created_at', { ascending: false }),
@@ -67,7 +68,7 @@ export default function AdminDashboard() {
         setLoading(false);
       });
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, roleLoading]);
 
   const getUserRole = (userId: string) => userRoles.find(r => r.user_id === userId)?.role || 'farmer';
 
