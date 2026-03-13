@@ -25,7 +25,7 @@ interface UserRole { user_id: string; role: string; }
 const CHART_COLORS = ['hsl(153, 60%, 40%)', 'hsl(42, 80%, 55%)', 'hsl(200, 70%, 45%)', 'hsl(0, 72%, 51%)'];
 
 export default function AdminDashboard() {
-  const { user, hasRole, loading: authLoading } = useAuth();
+  const { user, hasRole, loading: authLoading, roleLoading } = useAuth();
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [products, setProducts] = useState<any[]>([]);
