@@ -85,6 +85,21 @@ export default function AdminDashboard() {
     toast.success(`${reg.business_name} rejected.`);
   };
 
+  const deleteVendor = async (reg: VendorRegistration) => {
+    // Remove vendor role
+    await supabase.from('user_roles').delete().eq('user_id', reg.user_id).eq('role', 'vendor');
+    // Reset to farmer role if no other roles
+    const { data: remainingRoles } = await supabase.from('user_roles').select('id').eq('user_id', reg.user_id);
+    if (!remainingRoles || remainingRoles.length === 0) {
+      await supabase.from('user_roles').insert({ user_id: reg.user_id, role: 'farmer' });
+    }
+    // Delete the registration
+    await supabase.from('vendor_registrations').delete().eq('id', reg.id);
+    setVendorRegs(prev => prev.filter(r => r.id !== reg.id));
+    setUserRoles(prev => prev.filter(r => !(r.user_id === reg.user_id && r.role === 'vendor')));
+    toast.success(`${reg.business_name} deleted.`);
+  };
+
   const deletePost = async (id: string) => {
     await supabase.from('posts').delete().eq('id', id);
     setPosts(prev => prev.filter(p => p.id !== id));
@@ -254,12 +269,15 @@ export default function AdminDashboard() {
                         <TableCell><Badge variant={reg.status === 'approved' ? 'default' : reg.status === 'rejected' ? 'destructive' : 'secondary'}>{reg.status}</Badge></TableCell>
                         <TableCell className="text-sm text-muted-foreground">{new Date(reg.created_at).toLocaleDateString()}</TableCell>
                         <TableCell>
-                          {reg.status === 'pending' && (
-                            <div className="flex gap-1">
-                              <Button size="sm" variant="outline" className="text-success h-7 px-2" onClick={() => approveVendor(reg)}><CheckCircle className="h-3.5 w-3.5 mr-1" /> Approve</Button>
-                              <Button size="sm" variant="outline" className="text-destructive h-7 px-2" onClick={() => rejectVendor(reg)}><XCircle className="h-3.5 w-3.5 mr-1" /> Reject</Button>
-                            </div>
-                          )}
+                          <div className="flex gap-1">
+                            {reg.status === 'pending' && (
+                              <>
+                                <Button size="sm" variant="outline" className="text-success h-7 px-2" onClick={() => approveVendor(reg)}><CheckCircle className="h-3.5 w-3.5 mr-1" /> Approve</Button>
+                                <Button size="sm" variant="outline" className="text-destructive h-7 px-2" onClick={() => rejectVendor(reg)}><XCircle className="h-3.5 w-3.5 mr-1" /> Reject</Button>
+                              </>
+                            )}
+                            <Button size="sm" variant="outline" className="text-destructive h-7 px-2" onClick={() => deleteVendor(reg)}><Trash2 className="h-3.5 w-3.5 mr-1" /> Delete</Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
